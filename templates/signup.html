@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .image-container {
+            height: 100vh;
+            background-image: url('https://static.vecteezy.com/system/resources/previews/005/482/679/non_2x/background-with-dark-line-arrows-for-business-corporate-geometric-pattern-with-angle-strips-for-banner-cool-futuristic-background-abstract-modern-wallpaper-design-illustration-vector.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .image-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+        }
+
+        /* Increase size of input boxes */
+        .form-control {
+            height: 50px; /* Adjust height as needed */
+            font-size: 18px; /* Adjust font size as needed */
+        }
+
+        /* Adjust size of additional fields */
+        .form-group input[type="text"] {
+            height: 50px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <div class="form-container">
+                <h2>Sign Up</h2>
+                <form id="signupForm" method="post">
+                    <div class="form-group">
+                        <input type="text" name="username" class="form-control" placeholder="Username" id="username">
+                        <p id="IsValidUsername" style="display: none">Enter Your Username!</p>
+                    </div>
+                    <div class="form-group">
+
+                        <input type="password" name="password" class="form-control" placeholder="Password" id="password">
+                        <p id="IsValidPassword" style="display: none">Enter Your password!</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="name" class="form-control" name="name" placeholder="Name" id="name">
+                        <p id="IsValidName" style="display: none">Enter Your name!</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="age" placeholder="Age" id="age">
+                        <p id="IsValidAge" style="display: none">Enter Your age!</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="mobile" placeholder="Mobile Number" id="mobile">
+                        <p id="IsValidMobileNo" style="display: none">Enter Your mobile Number!</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="address" placeholder="Address" id="address">
+                        <p id="IsValidAddress" style="display: none">Enter Your Address!</p>
+                    </div>
+                    <button type="button" onclick="signup()" class="btn btn-primary btn-block">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 p-0">
+            <div class="image-container"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="signupSuccessModal" tabindex="-1" role="dialog" aria-labelledby="signupSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signupSuccessModalLabel">Signup Successful!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Your account has been successfully created. You can now login.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="redirect()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function redirect(){
+        window.location.href = "/mvc/mainpage";
+    }
+
+    function signup(){
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+        let name = document.getElementById("name").value;
+        let age = document.getElementById("age").value;
+        let mobile = document.getElementById("mobile").value;
+        let address = document.getElementById("address").value;
+
+        if (username==""){
+            document.getElementById("IsValidUsername").style = "display : block"
+            return false;
+        }
+        if (password==""){
+            document.getElementById("IsValidPassword").style = "display : block"
+            return false;
+        }
+        if (name==""){
+            document.getElementById("IsValidName").style = "display : block"
+            return false;
+        }
+        if (age==""){
+            document.getElementById("IsValidAge").style = "display : block"
+            return false;
+        }
+        if (mobile==""){
+            document.getElementById("IsValidMobileNo").style = "display : block"
+            return false;
+        }
+        if (address==""){
+            document.getElementById("IsValidAddress").style = "display : block"
+            return false;
+        }
+
+        let xhr = new XMLHttpRequest();
+        let url = "/rest/signup";
+        xhr.open("POST",url);
+        let data = {
+            'username' : username,
+            'password' : password,
+            'name':name,
+            'mobileNo':mobile,
+            'address':address,
+            'age':age,
+            'changepassword':false
+        }
+        // xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data))
+        xhr.onreadystatechange = function (){
+            if (this.readyState == 4) {
+
+                let response = JSON.parse(this.response)
+
+                if (response == false) {
+                    $('#message').html('UserName Already Exist! <br>Create User</br>')
+                    $('#signupSuccessModal').modal('show');
+                }
+                if (response == true) {
+                    $('#message').html('User Created!')
+                    $('#signupSuccessModal').modal('show');
+                }
+            }
+        }
+
+    }
+
+
+</script>
+</body>
+</html>

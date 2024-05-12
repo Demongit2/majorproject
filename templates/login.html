@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .form-container {
+            padding: 40px;
+        }
+
+        .image-container {
+            height: 100vh;
+            background-image: url('https://static.vecteezy.com/system/resources/previews/005/482/679/non_2x/background-with-dark-line-arrows-for-business-corporate-geometric-pattern-with-angle-strips-for-banner-cool-futuristic-background-abstract-modern-wallpaper-design-illustration-vector.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .image-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 200px;
+            height: auto;
+        }
+
+        .welcome-message {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 d-flex justify-content-center align-items-center">
+            <div class="form-container">
+                <div class="logo">
+                    <img src="https://media.licdn.com/dms/image/C4E0BAQEIm4pnbpl4tw/company-logo_200_200/0/1630613177734/edunext_technologies_pvt_ltd__logo?e=2147483647&v=beta&t=69Fekq2K15vp2cno5KzoOEqgzu1yw8iB_K1bualiq6g" alt="Logo">
+                </div>
+                <h2 class="welcome-message">Welcome to Our Platform</h2>
+                <form id="login-form" method="get">
+                    <div class="form-group">
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Username">
+                        <p id="usernameIsValid" style="display: none">Enter your Username!</p>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Password">
+                        <p id="passwordIsValid" style="display: none">Enter your Password!</p>
+                        <br>
+                        <a href="#" class="forgot-password" onclick="resetPass()">Forgot Password?</a>
+                    </div>
+                    <button type="button" onclick="login()" class="btn btn-primary btn-block">Login</button>
+                    <button type="button" class="btn btn-light btn-block mt-3" onclick="window.location.href='/mvc/signup'">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 p-0">
+            <div class="image-container"></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="signupSuccessModal" tabindex="-1" role="dialog" aria-labelledby="signupSuccessModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="signupSuccessModalLabel">Message</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="message">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="resetPassword" tabindex="-1" role="dialog" aria-labelledby="resetPasswordSuccessful" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Forgot Password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="newusername" name="username" class="form-control" placeholder="Username">
+                    <p id="Validresetusername" style="display: none">Enter your Username!</p>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="newpassword" name="username" class="form-control" placeholder="Password">
+                    <p id="ValidresetPassword" style="display: none">Enter your Password!</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="changePassword()" class="btn btn-primary btn-block">Change Password</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function login(){
+        let username = document.getElementById("username").value;
+        let password = document.getElementById("password").value;
+
+        if (username==""){
+            document.getElementById("usernameIsValid").style = "display : block"
+            return false;
+        }
+        if (password==""){
+            document.getElementById("passwordIsValid").style = "display : block"
+            return false;
+        }
+
+
+        let xhr = new XMLHttpRequest();
+        let url = "/rest/login";
+        xhr.open("post",url);
+        let data = {
+            'username' : username,
+            'password' : password
+        }
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data))
+        xhr.onreadystatechange = function (){
+            if (this.readyState == 4){
+
+                let response = JSON.parse(this.response)
+
+                if(response.IS_EXIST == false) {
+                    $('#message').html('User Does Not Exist! <br>Create User</br>')
+                    $('#signupSuccessModal').modal('show');
+                }
+                if(response.IS_EXIST){
+                    let url = "/mvc/userdataview";
+                    window.location = url + "?username=" + username + "&password=" + password;
+                }
+
+            }
+        }
+
+    }
+
+    function resetPass(){
+        $('#resetPassword').modal('show');
+    }
+
+    function changePassword(){
+        let username = document.getElementById("newusername").value;
+        let password = document.getElementById("newpassword").value;
+
+        if (username==""){
+            document.getElementById("Validresetusername").style = "display : block"
+            return false;
+        }
+        if (password==""){
+            document.getElementById("ValidresetPassword").style = "display : block"
+            return false;
+        }
+
+        let xhr = new XMLHttpRequest();
+        let url = "/rest/signup";
+        xhr.open("post",url);
+        let data = {
+            'username' : username,
+            'password' : password,
+            'changepassword': true
+        }
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(data))
+        xhr.onreadystatechange = function (){
+            if (this.readyState == 4){
+
+                let response = JSON.parse(this.response)
+
+                if(response== false) {
+                    $('#message').html('User Does Not Exist! <br>Create User</br>')
+                    $('#signupSuccessModal').modal('show');
+                }
+                else{
+                    $('#resetPassword').modal('hide');
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 1000);
+                }
+            }
+        }
+
+
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Comparison</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            padding-top: 80px;
+            /* Adjust based on navbar height */
+            /* background: url('') no-repeat center center fixed; */
+            /* Use Lord Hanuman's image as background */
+            background-size: cover;
+            /* Cover the entire screen */
+        }
+
+        footer {
+            background-color: #343a40;
+            /* Update footer background color */
+            color: #fff;
+            /* Update footer text color */
+            padding: 20px 0;
+        }
+
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Semi-transparent white background */
+            color: #333;
+            /* Update text color */
+        }
+
+        .product-card:hover {
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .product-card h4 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            /* Update primary button background color */
+            border-color: #007bff;
+            /* Update primary button border color */
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            /* Update primary button hover background color */
+            border-color: #0056b3;
+            /* Update primary button hover border color */
+        }
+
+        /* Night mode */
+        body.night-mode {
+            background-color: #000;
+            color: #eee;
+        }
+
+        body.night-mode footer {
+            background-color: #222;
+        }
+
+        body.night-mode .navbar {
+            background-color: #222;
+        }
+
+        body.night-mode .product-card {
+            background-color: #333;
+            /* Update background color */
+            color: #eee;
+            /* Update text color */
+        }
+
+        body.night-mode .btn-primary {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a class="navbar-brand" href="#">Product Comparison</a>
+        <button id="nightModeToggle" class="btn btn-primary ml-auto">Night Mode: Off</button>
+        {% if 'username' in session %}
+        <div class="btn-group ml-2">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+        {% endif %}
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1 class="text-center">Find the Best Deals</h1>
+                <h2 class="text-center">Product: {{ product }}</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="text-center">Flipkart Results</h3>
+                {% for result in flipkart_results %}
+                <div class="col-md-12 product-card">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ result['image'] }}" alt="{{ result['name'] }}" class="img-fluid">
+                        </div>
+                        <div class="col-md-8">
+                            <h4>{{ result['name'] }}</h4>
+                            <p><strong>Price:</strong> {{ result['price'] }}</p>
+                            <p><strong>Rating:</strong> {{ result['rating'] }}</p>
+                            <a href="https://www.flipkart.com{{ result['link'] }}" target="_blank"
+                                class="btn btn-primary">View Deal</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-center">Amazon Results</h3>
+                {% for result in amazon_results %}
+                <div class="col-md-12 product-card">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <img src="{{ result['image'] }}" alt="{{ result['name'] }}" class="img-fluid">
+                        </div>
+                        <div class="col-md-8">
+                            <h4>{{ result['name'] }}</h4>
+                            <p><strong>Price:</strong> {{ result['price'] }}</p>
+                            <p><strong>Rating:</strong> {{ result['rating'] }}</p>
+                            <a href="{{ result['link'] }}" target="_blank" class="btn btn-primary">View Deal</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container text-center">
+            <p>&copy; 2024 Product Comparison. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Script for Night mode toggle -->
+    <script>
+        document.getElementById("nightModeToggle").addEventListener("click", function () {
+            document.body.classList.toggle("night-mode");
+            var buttonText = document.body.classList.contains("night-mode") ? "Night Mode: On" : "Night Mode: Off";
+            document.getElementById("nightModeToggle").textContent = buttonText;
+        });
+    </script>
+</body>
+
+</html>
