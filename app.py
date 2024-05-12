@@ -15,10 +15,10 @@ app.secret_key = "your_secret_key_here"  # Change this to a secret key of your c
 users = {"user1": "password1", "user2": "password2"}
 
 # MySQL configurations
-app.config["MYSQL_HOST"] = "localhost"
-app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "root"
-app.config["MYSQL_DB"] = "dbtest"
+app.config["MYSQL_HOST"] = "sunnyvm.mysql.pythonanywhere-services.com"
+app.config["MYSQL_USER"] = "sunnyvm"
+app.config["MYSQL_PASSWORD"] = "mysqldatabase"
+app.config["MYSQL_DB"] = "sunnyvm$default"
 mysql = MySQL(app)
 
 bcrypt = Bcrypt(app)
